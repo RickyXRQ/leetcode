@@ -5,7 +5,7 @@
 要求：在一个数组里移除指定value，并且返回新的数组长度。因为题目里面要求了in place，所以我们还不能新建数组。
 
 ## solution:
-```
+```C++
 #include <iostream>
 using namespace std;
 
