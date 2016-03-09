@@ -1,3 +1,18 @@
+#*Template*
+
+# X. Problem Name
+
+> The content of the Problem
+
+要求： 中文版的题目的具体要求
+
+## 1.Solution:
+```C++
+C++ code here
+```
+## 2.Analysis:
+My analysis here.
+
 # 一. Remove Element
 
 > Given an array and a value, remove all instances of that value in place and return the new length. The order of elements can be changed. It does't matter what you leave beyond the new length.
@@ -182,3 +197,101 @@ int main()
 |             消灭排序好的重复元素的操作               |
 |------------------------------------------------------|
 |遇到不等的时候，让小游标的下一个元素的值等于大游标的值|
+
+# 三. Plus One
+
+> Given a non-negative number represented as an array of digits, plus one to the number. The digits are stored such that the most significant digit is at the head of the list
+
+要求： 给出一个按位存储的非负数，给这个非负数加1。 这个数的存储形式是高位在前。
+
+## 1.Solution:
+```C++
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+class Solution
+{
+public:
+	vector<int> plusOne(vector<int> &digits)
+	{
+		vector<int> res(digits.size(),0);
+		int sum = 0;
+		int one = 1;
+		for(int i = digits.size() - 1; i >= 0; i--)
+		{
+			sum = one + digits[i];
+			one = sum / 10;
+			res[i] = sum % 10;
+		}
+		if(one > 0)
+		{
+			res.insert(res.begin(), one);
+		}
+		return res;
+	}
+};
+
+class Solution2
+{
+public:
+	vector<int> plus1(vector<int> digits)
+	{
+		vector<int> res(digits.size(),0);
+		int sum = 0;
+		int add = 0;
+		for(int i = digits.size()-1; i >=0; i--)
+		{
+			if(i == digits.size() - 1)
+			{
+				sum = digits[i] + 1;
+			}
+			else
+			{
+				sum = add + digits[i];
+			}
+			add = sum / 10;
+			res[i] = sum % 10;
+		}
+		if(add > 0)
+		{
+			res.insert(res.begin(),1);
+		}
+		return res;
+	}
+};
+
+int main()
+{
+	vector<int> a(4,0);
+	vector<int>::iterator it;
+	int i = 4;
+	for(it = a.begin(); it != a.end(); it++)
+	{
+		*it = i;
+		i--;
+	}
+	Solution2 xu;
+	vector<int> result(a.size(),0);
+	result = xu.plus1(a);
+	for(it = result.begin(); it != result.end(); it++)
+	{
+		cout << *it << endl;
+	}
+	Solution temp;
+	vector<int> result2(a.size(),0);
+	result2 = temp.plusOne(a);
+	for(it = result2.begin(); it != result2.end(); it++)
+	{
+		cout << *it << endl;
+	}
+}
+
+```
+## 2.Analysis:
+一开始拿到这道题我没什么思路，因为它说的按照digit来存储，所以我想到了数组。但是用数组来存储如果遇到进位的情况会比较麻烦。我就看了答案。答案是用vector来实现的。上面贴的代码中，Solution是答案的代码，Solution2是我自己写的代码，答题思路一样，无非就是让最低位加1，因为加1后可能涉及到进位，所以要把和对10取余后作为结果的对应位数，而把和除以10的结果作为进位的结果（因为都是int型）。需要注意的是，在做完后，还得看最后进位有没有，如果有的话则需要在最前面添加1，即999999作为输入参数的情况。对比我和答案，还是我太死板了，因为one这个变量就在一开始用过以后就再也不用了，因此完全没必要像我那样分情况讨论的。。。 
+*这道题我觉得对于我来说比较重要的两点是：*
+- 按位加法的实现思路
+	按位相加后，对10取余的结果进位，除以10的结果和本位相加
+- 对vector的应用
