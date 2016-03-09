@@ -291,7 +291,79 @@ int main()
 ```
 ## 2.Analysis:
 一开始拿到这道题我没什么思路，因为它说的按照digit来存储，所以我想到了数组。但是用数组来存储如果遇到进位的情况会比较麻烦。我就看了答案。答案是用vector来实现的。上面贴的代码中，Solution是答案的代码，Solution2是我自己写的代码，答题思路一样，无非就是让最低位加1，因为加1后可能涉及到进位，所以要把和对10取余后作为结果的对应位数，而把和除以10的结果作为进位的结果（因为都是int型）。需要注意的是，在做完后，还得看最后进位有没有，如果有的话则需要在最前面添加1，即999999作为输入参数的情况。对比我和答案，还是我太死板了，因为one这个变量就在一开始用过以后就再也不用了，因此完全没必要像我那样分情况讨论的。。。 
-_这道题我觉得对于我来说比较重要的两点是：_
+**这道题我觉得对于我来说比较重要的两点是：**
 - 按位加法的实现思路
 	按位相加后，对10取余的结果进位，除以10的结果和本位相加
 - 对vector的应用
+
+# 5. Pascal's Triangle
+
+> Given numRows, generate the first numRows of Pascal's triangle.
+
+For example, give numRows = 5, Return
+
+    [1]
+   [1,1]
+  [1,2,1]
+ [1,3,3,1]
+[1,4,5,4,1]
+
+要求： 输入一个正整数，输出类似的三角形。
+
+```C++
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Solution
+{
+public:
+
+	vector<vector<int>> PascalTriangle3(int n)
+	{
+		vector<vector<int>> result;
+		result.resize(n);
+		for(int i = 0; i < n; i++)
+		{
+			result[i].resize(i+1);
+			result[i][0] = 1;
+			result[i][result[i].size() - 1] = 1;
+			for(int j = 1; j < result[i].size()-1; j++)
+			{
+				//if(i == 0 || i == 1)
+				//	continue;
+				result[i][j] = result[i-1][j-1] + result[i-1][j];
+			}
+		}
+		return result;
+	}
+};
+
+int main()
+{
+	vector<vector<int>> result;
+	cout << "please cin a number" << endl;
+	int num;
+	cin >> num;
+	result.resize(num);
+	Solution a;
+	result = a.PascalTriangle3(num);
+	vector<vector<int>>::iterator itr1;
+	vector<int>::iterator itr2;
+
+	for(itr1 = result.begin(); itr1 != result.end(); itr1++)
+	{
+		cout << "[";
+		for(itr2 = itr1->begin(); itr2 != itr1->end(); itr2++)
+		{
+			cout << (*itr2) << " ";
+
+		}
+		cout << "]" << endl;
+	}
+	return 1;
+}
+
+```
+## 2.Analysis:
+这道题观察规律方面不难，但是实话说花了我大半个晚上的时间。究其原因是我用错了vector的iterator，如果定义了vector<vector<int>>::iterator itr，貌似是不能用**itr来输出int的值的。最后也是参考了答案的思路，因为总结的规律A[m][n] = A[m-1][n-1] + A[m-1][n]，注意这儿有可能越界的地方，给的答案没法正确执行就是因为它没有注意到越界这个问题。实现起来用两层vector，然后用数组的用法来实现值的变化。因为这个数字三角每一行的第一个和最后一个数都是1，所以可以一开始就把这些1给赋值好。以后再循环赋值的时候就别管最后一个值，这样就不会有越界的危险。
