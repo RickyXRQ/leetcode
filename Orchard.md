@@ -296,7 +296,7 @@ int main()
 	按位相加后，对10取余的结果进位，除以10的结果和本位相加
 - 对vector的应用
 
-# 5. Pascal's Triangle
+# 四. Pascal's Triangle
 
 > Given numRows, generate the first numRows of Pascal's triangle.
 
@@ -371,3 +371,58 @@ int main()
 ```
 ## 2.Analysis:
 这道题观察规律方面不难，但是实话说花了我大半个晚上的时间。究其原因是我用错了vector的iterator，如果定义了vector<vector<int>>::iterator itr，貌似是不能用**itr来输出int的值的。最后也是参考了答案的思路，因为总结的规律A[m][n] = A[m-1][n-1] + A[m-1][n]，注意这儿有可能越界的地方，给的答案没法正确执行就是因为它没有注意到越界这个问题。实现起来用两层vector，然后用数组的用法来实现值的变化。因为这个数字三角每一行的第一个和最后一个数都是1，所以可以一开始就把这些1给赋值好。以后再循环赋值的时候就别管最后一个值，这样就不会有越界的危险。
+
+# 五. Pascal's Triangle II
+
+> Given an index k, return the kth row of the Pascal's triangle. For example, given k = 3, return [1,3,3,1]
+
+要求： 和上一道类似，只不过是只要求输出第n行，不需要全部输出，注意，这道题要求的空间复杂度是O(n)
+
+## 1.Solution:
+``` Bash
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Solution
+{
+public:
+
+	vector<int> PascalTriangle(int n)
+	{
+		vector<int> result(n,0);
+		int i = 1;
+		while(i <= n)	//这层循环用来生成第n行，因为第n行需要从第1行开始逐渐累加，因此需要从第一行开始逐渐生成
+		{
+			result[0] = result[i-1] = 1;
+			if(i >= 3)
+			{
+				int j = i-2;
+				for(;j > 0;j--)		//这层循环用来做由第n-1行生成n行的叠加运算
+				{
+					result[j] = result[j] + result[j-1];
+				}
+			}
+			i++;
+		}
+		return result;
+	}
+};
+
+int main()
+{
+	Solution a;
+	cout << "Please enter a number" << endl;
+	int n;
+	cin >> n;
+	vector<int> result(n);
+	result = a.PascalTriangle(n);
+	for(vector<int>::iterator itr = result.begin(); itr != result.end(); itr++)
+	{
+		cout << (*itr) << " ";
+	}
+	return 1;
+}
+```
+## 2.Analysis:
+因为空间复杂度要求为o(n)，因此就不能用二维数组的vector，需要用一维的vector来反复更新值。如对于第5行来说，其实是vector[0] = 1; vector[1] = vector[1] + bector[0]; vector[2] = vector[2] + vector[1]; vector[3] = vector[3] + vector[2]; 但是如果我们自己简单地这样写的话，会遇到一个问题，比如第二句更新了vector[1]的值，在计算新的vector[2]的时候就不能借用上一行的vector[1]了，为了避免这个问题，我们在实现的时候应该按照上面倒序的形式来写，即vector[3] = vector[3] + vector[2]; vector[2] = vector[2] + vector[1]; vector[1] = vector[1] + bector[0];  这样的话，在对每一行进行从后到前的更新时，后面更新的值不会影响前面值的更新。
