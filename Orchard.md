@@ -379,7 +379,7 @@ int main()
 要求： 和上一道类似，只不过是只要求输出第n行，不需要全部输出，注意，这道题要求的空间复杂度是O(n)
 
 ## 1.Solution:
-``` Bash
+``` C++
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -426,3 +426,88 @@ int main()
 ```
 ## 2.Analysis:
 因为空间复杂度要求为o(n)，因此就不能用二维数组的vector，需要用一维的vector来反复更新值。如对于第5行来说，其实是vector[0] = 1; vector[1] = vector[1] + bector[0]; vector[2] = vector[2] + vector[1]; vector[3] = vector[3] + vector[2]; 但是如果我们自己简单地这样写的话，会遇到一个问题，比如第二句更新了vector[1]的值，在计算新的vector[2]的时候就不能借用上一行的vector[1]了，为了避免这个问题，我们在实现的时候应该按照上面倒序的形式来写，即vector[3] = vector[3] + vector[2]; vector[2] = vector[2] + vector[1]; vector[1] = vector[1] + bector[0];  这样的话，在对每一行进行从后到前的更新时，后面更新的值不会影响前面值的更新。
+
+# 六. Merge Sorted Array
+
+> Given two sorted integer arrays A and B, merge B into A as one sorted array. Node: you may assume that A has enough space(size that is greater or equal to m+n) to hold additional elements from B. The number of elements initialized in A and B are m and n respectively.
+
+要求： 有两个排序好的数组A和B，将这两个数组合并为一个数组，并且保持从小到大的顺序。
+
+``` C++
+#include <iostream>
+#include <vector>
+using namespace std;
+
+#define MAXSIZE 100
+
+class Solution
+{
+public:
+	void MergeArray(int a[], int an, int b[], int bn)
+	{
+		int i = 0, j = 0;
+		while( j < bn)
+		{
+			if(b[j] < a[i])
+			{
+				//前插(把b[j]的值插到a[i]前)
+				for(int temp1 = an; temp1 > i; temp1--)
+				{
+					a[temp1] = a[temp1 - 1];
+				}
+				a[i] = b[j];
+				j++;
+				an++;
+			}
+			else
+			{
+				if(i < an - 1)
+				{
+					i++;
+				}
+				else
+				{
+					//把b[j]所有的值插到a[i]后， 因为到这一步，可以认为b后面所有的值都大于a的值了
+					for(int temp = 0; temp < bn - j; temp++)
+					{
+						a[i + 1 + temp] = b[j + temp];
+					}
+					break;
+				}
+			}
+		}
+	}
+};
+
+int main()
+{
+	Solution res;
+	int a[MAXSIZE];
+	for(int i = 0; i < MAXSIZE; i++)
+	{
+		a[i] = 0;
+	}
+	a[0] = 1;
+	a[1] = 3;
+	a[2] = 9;
+	a[3] = 10;
+	a[4] = 11;
+	int b[3] = {5,17,23};
+	int an = 5, bn = 3;
+	res.MergeArray(a,an,b,bn);
+	for(int j = 0; j < MAXSIZE; j++)
+	{
+		if(a[j] == 0)
+		{
+			break;
+		}
+		else
+		{
+			cout << a[j] << " ";
+		}
+	}
+}
+```
+## 2.Analysis:
+这道题我的思路是这样的，遍历第二个数组b，找到a中比b大的元素，如果找到，则将b前插在这个元素之前，同时让数组a的长度增加1，继续访问b的下一个元素。用这个逻辑来遍历b中的所有元素。特殊情况是b的某一个元素比a的最后一个元素都大，那么问题就好办了，直接把b中的这个元素及其后面所有的元素添加到a元素的后面。前插就是线性表的插入操作。对两个数组赋了不同的值，各种情况下都能通过。**答案用了一种很巧妙的方法：因为两个数组合并后的新数组的元素一定是m+n-1，因此就从a和b中从后往前访问，把二者的较大值赋值给a的m+n-1，然后指在m+n-1的游标减1继续操作即可**
+
