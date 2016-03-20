@@ -592,3 +592,87 @@ int main()
 ## 2.Analysis:
 这道题我一开始拿到的时候打算用暴力穷举法，想不出其他算法来。看了答案才知道应该用hash_map，写这段话的时候我只看过一遍C++ Primet中的map，所以可能有些话不准确。我还不懂什么事哈希map。这道题的思路是，建立一个数组元素和下标号对应的map，外层循环遍历所有的元素，然后调用map中的find()函数来找和减去外层循环的值，找到后把两个结果按照题目要求进行修正后压栈即可。
 
+# 八. 3sum
+
+> The content of the Problem
+
+要求： 中文版的题目的具体要求
+
+## 1.Solution:
+```C++
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <unordered_map>
+using namespace std;
+
+class Solution
+{
+public:
+	vector<vector<int>> threeSum(vector<int> numbers)
+	{
+		vector<int> result;
+		vector<vector<int>> results;
+		sort(numbers.begin(), numbers.end());
+		if(numbers.size() < 3)
+		{
+			return results;
+		}
+		int j,k;
+		for(int i = 0; i < numbers.size() - 2; i++)
+		{
+			j = i + 1;
+			k = numbers.size() - 1;
+			while( j < k)
+			{
+				if(numbers[i] + numbers[j] + numbers[k] == 0)
+				{
+					result.push_back(i);
+					result.push_back(j);
+					result.push_back(k);
+					results.push_back(result);
+					result.clear();		//这儿的清空很重要啊。。。
+					//注意，这儿还有东西添加
+					j++;
+					k--;
+				}
+				else if(numbers[i] + numbers[j] + numbers[k] < 0)
+				{
+					j++;
+				}
+				else if(numbers[i] + numbers[j] + numbers[k] > 0)
+				{
+					k--;
+				}
+			}
+		}
+		return results;
+	}
+
+};
+
+int main()
+{
+	Solution a;
+	vector<int> vec;
+	vec.resize(11);
+	int i = 1;
+	for(vector<int>::iterator itr = vec.begin(); itr != vec.end(); itr++, i++)
+	{
+		*itr = i - 6;
+	}
+	vector<vector<int>> result;
+	result = a.threeSum(vec);
+	for(vector<vector<int>>::iterator itr = result.begin(); itr != result.end(); itr++)
+	{
+		for(vector<int>::iterator itr2 = itr->begin(); itr2 != itr->end(); itr2++)
+		{
+			cout << *itr2;
+		}
+		cout << endl;
+	}
+	return 1;
+}
+```
+## 2.Analysis:
+My analysis here.
