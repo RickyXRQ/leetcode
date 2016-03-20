@@ -511,3 +511,84 @@ int main()
 ## 2.Analysis:
 这道题我的思路是这样的，遍历第二个数组b，找到a中比b大的元素，如果找到，则将b前插在这个元素之前，同时让数组a的长度增加1，继续访问b的下一个元素。用这个逻辑来遍历b中的所有元素。特殊情况是b的某一个元素比a的最后一个元素都大，那么问题就好办了，直接把b中的这个元素及其后面所有的元素添加到a元素的后面。前插就是线性表的插入操作。对两个数组赋了不同的值，各种情况下都能通过。**答案用了一种很巧妙的方法：因为两个数组合并后的新数组的元素一定是m+n-1，因此就从a和b中从后往前访问，把二者的较大值赋值给a的m+n-1，然后指在m+n-1的游标减1继续操作即可**
 
+# 七. 2sum
+
+> Given an array of intergers, find two numbers such that they add up to a specific target number. The function two Sum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note taht your returned answers (both index1 and index2) are not zero-based.  You may assum that each input would have exactly one solution. Input: numbers = {2,7,11,15}, target = 9, Output: index1 = 1, index2 = 2
+
+要求： 给定一个整型数组，找到和等于指定值的两个数，并且返回从小到大的两个数的基于1的下标
+
+## 1.Solution:
+```C++
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+class Solution
+{
+public:
+	vector<int> twoSum(vector<int> numbers, int target)
+	{
+		vector<int> result;
+		if(numbers.size() < 2)
+		{
+			return result;
+		}
+		unordered_map<int, int> myMap;	//观察
+		for(int i = 0; i < numbers.size(); i++)
+		{
+			myMap[numbers[i]] = i;
+		}
+		vector<int>::iterator pp ;
+		for(int i = 0; i < numbers.size(); i++)
+		{
+			int rest = target - numbers[i];
+			if(myMap.find(rest) != myMap.end())
+			{
+				int index = myMap[rest];
+				pp = find(result.begin(),result.end(),i);
+				if(index == i)
+				{
+					continue;
+				}
+
+				else if(index > i )
+				{
+					result.push_back(i + 1);
+					result.push_back(index + 1);
+					return result;
+				}
+				else if(index < i )
+				{
+					result.push_back(index + 1);
+					result.push_back(i + 1);
+					return result;
+				}
+			}
+		}
+	}
+};
+
+int main()
+{
+	Solution a;
+	int target = 8;
+	vector<int> vec;
+	vec.resize(10);
+	int i = 1;
+	for(vector<int>::iterator itr = vec.begin(); itr != vec.end(); itr++, i++)
+	{
+		*itr = i;
+	}
+	vector<int> result;
+	result = a.twoSum(vec,8);
+	for(vector<int>::iterator itr = result.begin(); itr != result.end(); itr++)
+	{
+		cout << *itr;
+	}
+	return 1;
+}
+```
+## 2.Analysis:
+这道题我一开始拿到的时候打算用暴力穷举法，想不出其他算法来。看了答案才知道应该用hash_map，写这段话的时候我只看过一遍C++ Primet中的map，所以可能有些话不准确。我还不懂什么事哈希map。这道题的思路是，建立一个数组元素和下标号对应的map，外层循环遍历所有的元素，然后调用map中的find()函数来找和减去外层循环的值，找到后把两个结果按照题目要求进行修正后压栈即可。
+
