@@ -594,9 +594,9 @@ int main()
 
 # 八. 3sum
 
-> The content of the Problem
+> Given an array of S of n intergers, are there elements a, b, c in S such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero. Note: Elements in a triplet (a,b,c) must be in non-descending order. (ie, a <= b <= c) The solution set must not contain duplicate triplets.
 
-要求： 中文版的题目的具体要求
+要求： 给定n个整数的数列，该数列中存在a,b,c使得a + b + c = 0吗？ 找到所有满足和为0的三个数的搭配。 注意： a、b、c得按照降序排列。 解法中不应该含有任何重复的答案。
 
 ## 1.Solution:
 ```C++
@@ -635,6 +635,15 @@ public:
 					//注意，这儿还有东西添加
 					j++;
 					k--;
+					//以下两个while循环是为了防止数列中存在连续两个相等的数的情况。
+					while( j < k && numbers[j] == numbers[j-1])
+					{
+						j++;
+					}
+					while( j < k && numbers[k] ==  numbers[k+1])
+					{
+						k--;
+					}
 				}
 				else if(numbers[i] + numbers[j] + numbers[k] < 0)
 				{
@@ -644,6 +653,10 @@ public:
 				{
 					k--;
 				}
+			}
+			if(numbers[i] == numbers[i+1])
+			{
+				i++;
 			}
 		}
 		return results;
@@ -675,4 +688,4 @@ int main()
 }
 ```
 ## 2.Analysis:
-My analysis here.
+这道题其实不难的，不过因为受了上道题的影响。我是想写一个两层的循环，然后第一个数对整个数组进行遍历，然后再在剩下的数里面调用2sum的解法去寻找。**感觉还是行得通的。**上面给出的方法是答案的方法，答案中先对这个数组进行排序，排序后分别用三个游标i,j,k来指向数组的第一个、第二个和最后一个元素，然后根据当下这三个数的和与0的关系来动态地调整这三个游标的变化，或者是进行保存。因为题设里面要求排除重复的答案，而数组中可能存在连续两个元素相等的情况，因此代码中引入了3个while循环来排除这种情况，因为三个游标都可能指到连续两个相等的情况，因此要用三个while来排除。
