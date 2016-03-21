@@ -776,3 +776,113 @@ int main()
 ```
 ## 2.Analysis:
 这道题有了之前的基础，应该挺简单的，还是像3sum一样设置三个游标i,j,k，开始的时候分别指向排序好的第一个元素、第二个元素和最后一个元素。i对所有元素进行遍历，j小于k即可，循环开始后，分析这三个数的和与target的大小情况，若大于target，则记录下差值，同最小差值min作比较，看看有必要更新没，如果有必要更新，则当前的和是到现在为止的最小值，记录此sum，因为现在大于target，自然而然要减小k来进行下一次循环了；若和小于target，则记录下差值，同最小差值min作比较，看看有没有更新的必要，如果有更新的必要，则当前的和就是截止到目前为止的最小值，则用result来记录sum，因为现在和小于target，为了要更接近target，当然要增大它们的和了，所以要让j往后移。**注意，这里还有和等于target的情况，此时这个和必然是最接近的，那么直接把和的结果返回即可。**
+
+# 十. 4Sum
+
+> Given an array S of n integers, are there elements a, b, c and d in S such that a + b + c + d = target? Find all unique quadruplets in the array which gives the sum of target.
+> Note:
+> - 1.Elements in quadruplets (a, b, c, d) must be in non-descending order. (ie, a<=b<=c<=d)
+> - 2.The solution must not contain duplicates quadruplets.
+
+要求： 给定n个元素的整型数组，找到所有和等于特定值的四个数。注意，必须按照升序排列，而且不能有重复的。
+
+## 1.Solution:
+```C++
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <unordered_map>
+using namespace std;
+
+class Solution
+{
+public:
+	vector<vector<int>> fourSum(vector<int> numbers, int target)
+	{
+		vector<vector<int>> results;
+		vector<int> result;
+		if(numbers.size() < 4)
+			return results;
+		sort(numbers.begin(),numbers.end());
+		//一开始我把l = numbers.size() - 1放到了这个地方，导致缺了很多结果出来
+		int j,k,l;
+		for(int i = 0; i < numbers.size() - 3; i++)
+		{
+			for( j = i + 1; j < numbers.size() - 2; j++)
+			{
+				k = j + 1;
+				//每次新确定i、j后都应该重新把k和l放一次，不能放在我一开始的位置，负责会缺项。
+				l = numbers.size() - 1;
+				while(k < l)
+				{
+					if(numbers[i] + numbers[j] + numbers[k] + numbers[l] == target)
+					{
+						result.push_back(numbers[i]);
+						result.push_back(numbers[j]);
+						result.push_back(numbers[k]);
+						result.push_back(numbers[l]);
+						results.push_back(result);
+						result.clear();
+						k++;
+						l--;
+						while(numbers[k] == numbers[k-1])
+						{
+							k++;
+						}
+						while(numbers[l] == numbers[l+1])
+						{
+							l--;
+						}
+					}
+					else if(numbers[i] + numbers[j] + numbers[k] + numbers[l] <= target)
+					{
+						k++;
+					}
+					else if(numbers[i] + numbers[j] + numbers[k] + numbers[l] >= target)
+					{
+						l--;
+					}
+				}
+				//答案上说这儿的两个while循环最好换成do-whlie循环，否则leetcode系统时间开销不满足，待验证
+				while(numbers[j] == numbers[j+1])
+				{
+					j++;
+				}
+			}
+			while(numbers[i] == numbers[i+1])
+			{
+				i++;
+			}
+		}
+		return results;
+	}
+};
+
+int main()
+{
+
+	Solution a;
+	vector<int> vec;
+	vec.resize(11);
+	int i = 1;
+	for(vector<int>::iterator itr = vec.begin(); itr != vec.end(); itr++, i++)
+	{
+		*itr = i - 6;
+	}
+	vector<vector<int>> results;
+	int target = 7;
+	results = a.fourSum(vec,target);
+	cout << "和为" << target << "的四个数有" << endl;
+	for(vector<vector<int>>::const_iterator itr1 = results.begin(); itr1 != results.end(); itr1++)
+	{
+		for(vector<int>::const_iterator itr2 = itr1->begin(); itr2 != itr1->end(); itr2++)
+		{
+			cout << *itr2 << ".";
+		}
+		cout << endl;
+	}
+	return 1;
+}
+```
+## 2.Analysis:
+这个题跟3sum几乎一样，只不过是遍历的游标变成了两个而已。其他可以参考3sum，遇到的问题是代码中注释所说的，把第三个游标k的赋值的位置一开始放错了，导致一开始出现了特别少的结果，总漏掉那么几条。调试了好久才发现问题。
