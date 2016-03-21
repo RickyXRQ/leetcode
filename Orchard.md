@@ -697,6 +697,7 @@ int main()
 要求：给定一个有n个整数的数组S，找出和指定数字target最接近的和，返回这三个数字的和即可。确认仅有一个输出。
 
 ## 1.Solution:
+```C++
 #include <iostream>
 #include <vector>
 #include <algorithm>
