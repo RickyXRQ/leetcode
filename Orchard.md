@@ -689,3 +689,89 @@ int main()
 ```
 ## 2.Analysis:
 这道题其实不难的，不过因为受了上道题的影响。我是想写一个两层的循环，然后第一个数对整个数组进行遍历，然后再在剩下的数里面调用2sum的解法去寻找。**感觉还是行得通的。**上面给出的方法是答案的方法，答案中先对这个数组进行排序，排序后分别用三个游标i,j,k来指向数组的第一个、第二个和最后一个元素，然后根据当下这三个数的和与0的关系来动态地调整这三个游标的变化，或者是进行保存。因为题设里面要求排除重复的答案，而数组中可能存在连续两个元素相等的情况，因此代码中引入了3个while循环来排除这种情况，因为三个游标都可能指到连续两个相等的情况，因此要用三个while来排除。
+
+# 九. 3Sum Closet
+
+> Given an array S of n integers, find three integers in S such that the sum is closet to a given number, target. Return the sum of the three integers. You can assure that each input would have exactly one solution.
+
+要求：给定一个有n个整数的数组S，找出和指定数字target最接近的和，返回这三个数字的和即可。确认仅有一个输出。
+
+## 1.Solution:
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <unordered_map>
+using namespace std;
+
+class Solution
+{
+public:
+	int threeSumCloset(vector<int> numbers, int target)
+	{
+		int result;
+		int sum;
+		sort(numbers.begin(), numbers.end());
+		if(numbers.size() < 3)
+		{
+			return result;
+		}
+		int j,k;
+		int tmp_dis,min = 10000;
+		for(int i = 0; i < numbers.size() - 2; i++)
+		{
+			j = i + 1;
+			k = numbers.size() - 1;
+			while(j < k)
+			{
+				sum = numbers[i] + numbers[j] + numbers[k];
+				if(sum > target)
+				{
+					tmp_dis = sum - target;
+					if(tmp_dis < min)
+					{
+						min = tmp_dis;
+						result = sum;
+					}
+					k--;
+				}
+				else if(sum < target)
+				{
+					tmp_dis = target - sum;
+					if(tmp_dis < min)
+					{
+						min = tmp_dis;
+						result = sum;
+					}
+					j++;
+				}
+				else
+				{
+					return sum;
+				}
+			}
+		}
+		return result;
+	}
+
+};
+
+int main()
+{
+
+	Solution a;
+	vector<int> vec;
+	vec.resize(11);
+	int i = 1;
+	for(vector<int>::iterator itr = vec.begin(); itr != vec.end(); itr++, i++)
+	{
+		*itr = i - 6;
+	}
+	int result;
+	int target = 7;
+	result = a.threeSumCloset(vec,target);
+	cout << "最接近" << target << "的数组中的和为" << result << endl;
+	return 1;
+}
+```
+## 2.Analysis:
+这道题有了之前的基础，应该挺简单的，还是像3sum一样设置三个游标i,j,k，开始的时候分别指向排序好的第一个元素、第二个元素和最后一个元素。i对所有元素进行遍历，j小于k即可，循环开始后，分析这三个数的和与target的大小情况，若大于target，则记录下差值，同最小差值min作比较，看看有必要更新没，如果有必要更新，则当前的和是到现在为止的最小值，记录此sum，因为现在大于target，自然而然要减小k来进行下一次循环了；若和小于target，则记录下差值，同最小差值min作比较，看看有没有更新的必要，如果有更新的必要，则当前的和就是截止到目前为止的最小值，则用result来记录sum，因为现在和小于target，为了要更接近target，当然要增大它们的和了，所以要让j往后移。**注意，这里还有和等于target的情况，此时这个和必然是最接近的，那么直接把和的结果返回即可。**
