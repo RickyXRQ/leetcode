@@ -886,3 +886,72 @@ int main()
 ```
 ## 2.Analysis:
 这个题跟3sum几乎一样，只不过是遍历的游标变成了两个而已。其他可以参考3sum，遇到的问题是代码中注释所说的，把第三个游标k的赋值的位置一开始放错了，导致一开始出现了特别少的结果，总漏掉那么几条。调试了好久才发现问题。
+
+# 十一. Find Minimum in Rotated Sorted Array
+
+> suppose a sorted array is rotated at some pivot unknown to you beforehand. (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2). Find the minimum element. You may assume no duplicate exists in the array.
+
+要求： 排序好的数组按照未知的轴进行了“旋转”，即从轴开始重排数组，轴之前的部分接到轴之后的部分。现在要找到这个重排后的数组的最小值。
+
+## 1.Solution:
+```C++
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Solution
+{
+public:
+	int findMin(vector<int> numbers)
+	{
+		int low = 0, high = numbers.size() - 1;
+		int mid;
+		while(low < high)
+		{
+			if(numbers[low] > numbers[high])
+			{
+				mid = (low + high) / 2;
+				if(numbers[low] < numbers[mid])
+				{
+					low = mid;
+				}
+				else if(numbers[low] > numbers[mid])
+				{
+					high = mid;
+				}
+				else
+				{
+					return numbers[high];
+				}
+			}
+			else
+				return numbers[low];
+		}
+	}
+};
+
+int main()
+{
+
+	Solution a;
+	vector<int> numbers;
+	numbers.push_back(-44);
+	numbers.push_back(-11);
+	numbers.push_back(-10);
+	numbers.push_back(-8);
+	numbers.push_back(-200);
+	numbers.push_back(-101);
+	numbers.push_back(-100);
+	int results;
+	results = a.findMin(numbers);
+	cout << "数列中最小的数为" << results << endl;
+	return 1;
+}
+```
+## 2.Analysis:
+这道题我想出来的思路有问题，是通过看分析才完成的。这道题的关键在于两点：
+- 如果一段数最左边的数值小于最右边的数值，那么这段数肯定是排序好的。如果最左边的数大于最右边的数字，那么这段数肯定是题设中所说的“旋转”的。
+- 使用二分查找的思路，不停地获取中间位置的值，然后应用上一条的原则来判断两边的数是有序的还是非有序的，最小的数一定在非有序的部分。
+一开始的时候，将low设置为数组的第一个元素，high设置为数组的最后一个元素。根据mid = (low + high)/2来计算出mid的值，然后根据low位置处的值和mid位置处的值来判断low-mid这一段数是否有序，若这一段数有序，则pivot的位置肯定在mid到high这部分，那么把low值用mid的值更新。若low-mid这一段无序，那么low-mid中一定存在最小值，则把high值用mid值进行更新。一直重复上述的过程即可。
+- 当找到numbers[low] < numbers[high]的时候，那么numbers[low]一定是最小值，返回即可。
+- 在二分查找的过程中，当范围在缩小的时候，最后缩到足够小的时候，比如说low和high已经相邻，即n和n+1的情况，这时候mid计算的结果为n，继续缩小也没什么意义了。而此时根据代码外部的判断，是num[high] < num[low]的，因此直接返回num[high]即可。
