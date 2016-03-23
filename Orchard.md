@@ -955,3 +955,80 @@ int main()
 一开始的时候，将low设置为数组的第一个元素，high设置为数组的最后一个元素。根据mid = (low + high)/2来计算出mid的值，然后根据low位置处的值和mid位置处的值来判断low-mid这一段数是否有序，若这一段数有序，则pivot的位置肯定在mid到high这部分，那么把low值用mid的值更新。若low-mid这一段无序，那么low-mid中一定存在最小值，则把high值用mid值进行更新。一直重复上述的过程即可。
 - 当找到numbers[low] < numbers[high]的时候，那么numbers[low]一定是最小值，返回即可。
 - 在二分查找的过程中，当范围在缩小的时候，最后缩到足够小的时候，比如说low和high已经相邻，即n和n+1的情况，这时候mid计算的结果为n，继续缩小也没什么意义了。而此时根据代码外部的判断，是num[high] < num[low]的，因此直接返回num[high]即可。
+
+# 十二. Find Minimum in Rotated Sorted Array
+
+> suppose a sorted array is rotated at some pivot unknown to you beforehand. (i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2). Find the minimum element. The array may contain duplicates
+
+要求： 这道题的要求和上一道一样，只不过是可能包含重复元素。
+
+## 1.Solution:
+```C++
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Solution
+{
+public:
+	int findMin(vector<int> numbers)
+	{
+		int low = 0, high = numbers.size() - 1;
+		int mid;
+		while(low < high - 1)
+		{
+			if(numbers[low] > numbers[high])
+			{
+				mid = (low + high) / 2;
+				if(numbers[low] < numbers[mid])
+				{
+					low = mid;
+				}
+				else if(numbers[low] > numbers[mid])
+				{
+					high = mid;
+				}
+				else
+				{
+					//这儿不能写成low = mid, 比如说这种情况 -8 -100 -8 -8 -8 -8 -8 -8 -8，如果直接用low = mid的话，那么就可能漏掉中间可能为轴的数
+					low++;	//我怎么觉得这儿直接弄成low = mid更好啊
+
+				}
+			}
+			else
+				return numbers[low];
+		}
+		return numbers[low]>numbers[high]?numbers[high]:numbers[low];
+	}
+};
+
+int main()
+{
+
+	Solution a;
+	vector<int> numbers;
+	numbers.push_back(-44);
+	numbers.push_back(-11);
+	numbers.push_back(-10);
+	numbers.push_back(-8);
+	numbers.push_back(-200);
+	numbers.push_back(-101);
+	numbers.push_back(-100);
+	/*
+	vector<int> vec;
+	vec.resize(11);
+	int i = 1;
+	for(vector<int>::iterator itr = vec.begin(); itr != vec.end(); itr++, i++)
+	{
+	*itr = i - 6;
+	}
+	vector<vector<int>> results;
+	*/
+	int results;
+	results = a.findMin(numbers);
+	cout << "数列中最小的数为" << results << endl;
+	return 1;
+}
+```
+## 2.Analysis:
+上道题我的解法有点混乱，其实很多编程题我感觉我做起来都是这样子，很有可能鲁棒性就除了问题了。上道题我主要是担心low和high相邻的情况，想方设法要排除这种情况。结果答案特别巧，把这种情况扼杀在摇篮里（用while循环），然后在外层去单独处理这个情况。这样程序设计的思路就很清楚了。然后具体到这道题，如果有重复出现的情况，也就是low处的值等于mid处的值，应当让low这个游标自增1，我想了一下后打算让low直接等于mid，最后意识到即使low处的值等于mid处的值，也不能保证low和mid之间的值都相等。
