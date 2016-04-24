@@ -1032,3 +1032,143 @@ int main()
 ```
 ## 2.Analysis:
 上道题我的解法有点混乱，其实很多编程题我感觉我做起来都是这样子，很有可能鲁棒性就除了问题了。上道题我主要是担心low和high相邻的情况，想方设法要排除这种情况。结果答案特别巧，把这种情况扼杀在摇篮里（用while循环），然后在外层去单独处理这个情况。这样程序设计的思路就很清楚了。然后具体到这道题，如果有重复出现的情况，也就是low处的值等于mid处的值，应当让low这个游标自增1，我想了一下后打算让low直接等于mid，最后意识到即使low处的值等于mid处的值，也不能保证low和mid之间的值都相等。
+
+# 十三 Largest Rectangle in Histogram
+
+这道题难度好大啊，周日晚上真是看不懂
+
+# 十四 Maximal Rectangle
+
+这道题用到了上道题的东西，也是不懂。
+
+# 十五. Palindrome Number
+
+> Determine whether an integer is a palindrome. Do this without extra space.
+
+要求： 判断一个数字是不是回文数字，并且不能用额外的空间。
+
+## 1.Solution:
+```C++
+#include <iostream>
+using namespace std;
+
+class solution
+{
+public:
+	bool isPalindrome(int x)
+	{
+		int ini, y;
+		if(x < 0)
+		{
+			return false;
+		}
+		else if(x == 0)
+		{
+			return true;
+		}
+		else
+		{
+			ini = x;
+			y = 0;
+			while(x)
+			{
+				y = y * 10 + x%10;
+				x /= 10;
+			}
+		}
+		if(ini == y)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+};
+
+int main()
+{
+	solution s1;
+	int a = 12321;
+	if(s1.isPalindrome(a))
+	{
+		cout << a << " is a palindrome number" << endl;
+	}
+	else
+	{
+		cout << a << " is not a palindrome number" << endl;
+	}
+	return 1;
+}
+```
+## 2.Analysis:
+这道题很简单，一开始我拿到题目打算把数字转换为字符串，然后再用两个指针比较。但是题目说了不能用额外的空间，所以思路肯定不对。答案的方法是用不停地除10和对10取余来获得这个数的倒转的数，最后再判断倒转的数和原来的数相等不相等即可。隐含的一个方法是获取一个数字的倒序输出。
+
+# 十六. Search a 2D Matrix
+
+> Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties: Integers in each row are sorted from left to right. The first integer of each row is greater than the last integer of the previous row. 
+
+要求： 在一个二维矩阵中找到目标值，矩阵性质比较特殊：每行的元素是从左到右排序的，并且每一行的第一个元素比上一行的最后一个元素大。
+
+## 1.Solution:
+```C++
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class solution
+{
+public:
+	bool searchMatrix(vector<vector<int>> &matrix, int target)
+	{
+		if(matrix.size() == 0)
+			return false;
+		if(matrix[0].size() == 0)
+			return false;
+		int row = 0, column = matrix[0].size() - 1;
+		while(row < matrix.size() && column >= 0)
+		{
+			if(target > matrix[row][column])
+				row++;
+			else if(target < matrix[row][column])
+				column--;
+			else
+				return true;
+		}
+		return false;
+	}
+};
+
+int main()
+{
+	vector<int> a, b, c, d;
+	a.push_back(1);
+	a.push_back(3);
+	a.push_back(5);
+	a.push_back(7);
+	b.push_back(10);
+	b.push_back(11);
+	b.push_back(16);
+	b.push_back(20);
+	c.push_back(23);
+	c.push_back(30);
+	c.push_back(34);
+	c.push_back(50);
+	vector<vector<int>> matrix;
+	matrix.push_back(a);
+	matrix.push_back(b);
+	matrix.push_back(c);
+	solution s1;
+	bool result = s1.searchMatrix(matrix,22);
+	if(result == true)
+		cout << "The target is in this matrix" << endl;
+	else
+		cout << "The target is not in this matrix" << endl;
+	return 1;
+
+}
+```
+## 2.Analysis:
+这个题在《剑指Offer》上做过，没啥可说的，选取右上角元素，如果比目标值大，则往左走，如果比目标值小，则往下走。也可以选取左下角元素，只要往两个方向走能分别代表变大和变小的处理即可。
